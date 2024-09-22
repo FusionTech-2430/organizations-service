@@ -104,7 +104,7 @@ public class OrganizationsController {
         }
     }
 
-    @DeleteMapping("/{id_organization}/users/{id_user}")
+    @DeleteMapping("/{id_organization}/users_d/{id_user}")
     public ResponseEntity<?> removeUserFromOrganization(
             @PathVariable("id_organization") String idOrganization,
             @PathVariable("id_user") String idUser
