@@ -1,2 +1,0 @@
-Archivo para estructura de proyecto
-Eliminar este archivo cuando se creen archivos sobre la carpeta.
