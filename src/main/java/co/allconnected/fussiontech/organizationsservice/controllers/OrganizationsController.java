@@ -38,10 +38,9 @@ public class OrganizationsController {
     public ResponseEntity<?> getOrganization(@PathVariable String id) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(organizationService.getOrganization(id));
-        } catch  (OperationException e){
+        } catch (OperationException e) {
             return ResponseEntity.status(e.getCode()).body(new Response(e.getCode(), e.getMessage()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error occurred: " + e.getMessage()));
         }
     }
@@ -79,15 +78,14 @@ public class OrganizationsController {
         try {
             organizationService.deleteOrganization(id);
             return ResponseEntity.status(HttpStatus.OK).body(new Response(HttpStatus.OK.value(), "Organization deleted"));
-        }
-        catch (OperationException e) {
+        } catch (OperationException e) {
             return ResponseEntity.status(e.getCode()).body(new Response(e.getCode(), e.getMessage()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error occurred: " + e.getMessage()));
         }
     }
 
+    // Endpoints for user-organization relationship
     @PostMapping("/{id_organization}/users/{id_user}")
     public ResponseEntity<?> assignUserToOrganization(
             @PathVariable("id_organization") String idOrganization,
@@ -96,13 +94,31 @@ public class OrganizationsController {
         try {
             organizationService.assignUserToOrganization(idOrganization, idUser);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body("Usuario asignado correctamente a la organización.");
+                    .body("User assigned to organization successfully.");
         } catch (OperationException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error inesperado: " + e.getMessage());
+                    .body("Unexpected error: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id_organization}/users/{id_user}")
+    public ResponseEntity<?> removeUserFromOrganization(
+            @PathVariable("id_organization") String idOrganization,
+            @PathVariable("id_user") String idUser
+    ) {
+        try {
+            organizationService.removeUserFromOrganization(idOrganization, idUser);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("User removed from organization successfully.");
+        } catch (OperationException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected error: " + e.getMessage());
         }
     }
 }
