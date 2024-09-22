@@ -31,10 +31,6 @@ public class User {
     @Column(name = "active", nullable = false)
     private Boolean active = false;
 
-    @OneToMany
-    @JoinTable(name = "user_organization",
-            schema = "all_connected_users",
-            joinColumns = @JoinColumn(name = "id_user"),
-            inverseJoinColumns = @JoinColumn(name = "id_organization"))
-    private Set<Organization> organizations = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<UserOrganization> userOrganizations = new LinkedHashSet<>();
 }

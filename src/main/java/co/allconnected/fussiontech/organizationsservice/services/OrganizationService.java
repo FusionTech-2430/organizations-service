@@ -3,7 +3,11 @@ package co.allconnected.fussiontech.organizationsservice.services;
 import co.allconnected.fussiontech.organizationsservice.dtos.OrganizationCreateDTO;
 import co.allconnected.fussiontech.organizationsservice.dtos.OrganizationDTO;
 import co.allconnected.fussiontech.organizationsservice.model.Organization;
+import co.allconnected.fussiontech.organizationsservice.model.User;
+import co.allconnected.fussiontech.organizationsservice.model.UserOrganization;
 import co.allconnected.fussiontech.organizationsservice.repository.OrganizationRepository;
+import co.allconnected.fussiontech.organizationsservice.repository.UserOrganizationRepository;
+import co.allconnected.fussiontech.organizationsservice.repository.UserRepository;
 import co.allconnected.fussiontech.organizationsservice.utils.OperationException;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,11 +24,15 @@ public class OrganizationService {
 
     private final OrganizationRepository organizationRepository;
     private final FirebaseService firebaseService;
+    private final UserRepository userRepository;
+    private final UserOrganizationRepository userOrganizationRepository;
 
     @Autowired
-    public OrganizationService(OrganizationRepository organizationRepository, FirebaseService firebaseService) {
+    public OrganizationService(OrganizationRepository organizationRepository, FirebaseService firebaseService, UserRepository userRepository, UserOrganizationRepository userOrganizationRepository) {
         this.organizationRepository = organizationRepository;
         this.firebaseService = firebaseService;
+        this.userRepository = userRepository;
+        this.userOrganizationRepository = userOrganizationRepository;
     }
 
     public OrganizationDTO createOrganization(OrganizationCreateDTO organizationDTO, MultipartFile photo) throws IOException {
@@ -94,4 +103,54 @@ public class OrganizationService {
             throw new OperationException(404, "Organization not found");
         }
     }
+
+    public void assignUserToOrganization(String idOrganization, String idUser) {
+        Optional<User> userOptional = userRepository.findById(idUser);
+        Optional<Organization> organizationOptional = organizationRepository.findById(UUID.fromString(idOrganization));
+
+        if (userOptional.isPresent() && organizationOptional.isPresent()) {
+            User user = userOptional.get();
+            Organization organization = organizationOptional.get();
+
+            boolean relationshipExists = user.getUserOrganizations().stream()
+                    .anyMatch(uo -> uo.getOrganization().getId().equals(organization.getId()));
+
+            if (!relationshipExists) {
+                UserOrganization userOrganization = new UserOrganization(user, organization, LocalDateTime.now());
+                user.getUserOrganizations().add(userOrganization);
+                userRepository.save(user);
+            } else {
+                throw new OperationException(409, "User already assigned to organization");
+            }
+        } else {
+            throw new OperationException(404, "User or Organization not found");
+        }
+        throw new OperationException(500, "Unexpected error");
+    }
+
+    public void removeUserFromOrganization(String idOrganization, String idUser) {
+        Optional<User> userOptional = userRepository.findById(idUser);
+        Optional<Organization> organizationOptional = organizationRepository.findById(UUID.fromString(idOrganization));
+
+        if (userOptional.isPresent() && organizationOptional.isPresent()) {
+            User user = userOptional.get();
+            Organization organization = organizationOptional.get();
+
+            Optional<UserOrganization> userOrganizationOptional = user.getUserOrganizations().stream()
+                    .filter(uo -> uo.getOrganization().getId().equals(organization.getId()))
+                    .findFirst();
+
+            if (userOrganizationOptional.isPresent()) {
+                UserOrganization userOrganization = userOrganizationOptional.get();
+                user.getUserOrganizations().remove(userOrganization);
+                organization.getUserOrganizations().remove(userOrganization);
+                userOrganizationRepository.delete(userOrganization);
+            } else {
+                throw new OperationException(409, "User not assigned to organization");
+            }
+        } else {
+            throw new OperationException(404, "User or Organization not found");
+        }
+    }
+
 }
