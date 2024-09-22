@@ -2,6 +2,7 @@ package co.allconnected.fussiontech.organizationsservice.dtos;
 
 import co.allconnected.fussiontech.organizationsservice.model.User;
 import co.allconnected.fussiontech.organizationsservice.model.Organization;
+import co.allconnected.fussiontech.organizationsservice.model.UserOrganization;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +27,7 @@ public class UserDTO {
         this.username = user.getUsername();
         this.mail = user.getMail();
         this.photo_url = user.getPhotoUrl();
-        // this.roles = user.getRoles().stream().map(Rol::getIdRol).toArray(String[]::new);
-        this.organizations = user.getOrganizations().stream().map(Organization::getId).toArray(String[]::new);
+        this.organizations = user.getUserOrganizations().stream().map(UserOrganization::getOrganization).map(Organization::getId).toArray(String[]::new);
         this.active = user.getActive();
     }
 }

@@ -87,4 +87,22 @@ public class OrganizationsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error occurred: " + e.getMessage()));
         }
     }
+
+    @PostMapping("/{id_organization}/users/{id_user}")
+    public ResponseEntity<?> assignUserToOrganization(
+            @PathVariable("id_organization") String idOrganization,
+            @PathVariable("id_user") String idUser
+    ) {
+        try {
+            organizationService.assignUserToOrganization(idOrganization, idUser);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Usuario asignado correctamente a la organización.");
+        } catch (OperationException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error inesperado: " + e.getMessage());
+        }
+    }
 }

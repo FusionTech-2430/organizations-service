@@ -2,15 +2,14 @@ package co.allconnected.fussiontech.organizationsservice.model;
 
 import co.allconnected.fussiontech.organizationsservice.dtos.OrganizationCreateDTO;
 import co.allconnected.fussiontech.organizationsservice.dtos.OrganizationDTO;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -26,7 +25,6 @@ public class Organization {
         this.locationLat = dto.location_lat();
         this.locationLng = dto.location_lng();
     }
-
 
     @Id
     @Column(name = "id_organization", nullable = false)
@@ -46,5 +44,8 @@ public class Organization {
 
     @Column(name = "photo_url", length = 200)
     private String photoUrl;
+
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
+    private Set<UserOrganization> userOrganizations = new LinkedHashSet<>();
 
 }

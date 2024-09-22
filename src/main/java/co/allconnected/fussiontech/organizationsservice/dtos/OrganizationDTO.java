@@ -15,6 +15,7 @@ public class OrganizationDTO {
     private BigDecimal location_lat;
     private BigDecimal location_lng;
     private String photoUrl;
+    private String[] users;
 
     public OrganizationDTO(Organization organization) {
         this.id_organization = organization.getId().toString();
@@ -23,5 +24,6 @@ public class OrganizationDTO {
         this.location_lat = organization.getLocationLat();
         this.location_lng = organization.getLocationLng();
         this.photoUrl = organization.getPhotoUrl();
+        this.users = organization.getUserOrganizations().stream().map(userOrganization -> userOrganization.getUser().getIdUser()).toArray(String[]::new);
     }
 }
