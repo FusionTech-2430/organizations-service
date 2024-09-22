@@ -41,9 +41,8 @@ public class OrganizationService {
         Organization organization = new Organization(organizationDTO);
         organization.setId(UUID.randomUUID());
 
-        // Manejando el archivo de foto
         if (photo != null && !photo.isEmpty()) {
-            String photoName = organization.getId().toString();
+            String photoName = String.valueOf(organization.getId());
             String extension = FilenameUtils.getExtension(photo.getOriginalFilename());
             organization.setPhotoUrl(firebaseService.uploadImg(photoName, extension, photo));
         }

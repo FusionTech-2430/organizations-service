@@ -14,8 +14,8 @@ public class FirebaseService {
     public String uploadImg(String imageName, String extension, MultipartFile imageFile) throws IOException {
         InputStream inputStream = imageFile.getInputStream();
         Bucket bucket = StorageClient.getInstance().bucket();
-        bucket.create("user_photos/"+imageName, inputStream, "image/"+extension);
-        return bucket.get("user_photos/"+imageName)
+        bucket.create("organization_photos/"+imageName, inputStream, "image/"+extension);
+        return bucket.get("organization_photos/"+imageName)
                 .signUrl(360, java.util.concurrent.TimeUnit.DAYS).toString();
     }
 

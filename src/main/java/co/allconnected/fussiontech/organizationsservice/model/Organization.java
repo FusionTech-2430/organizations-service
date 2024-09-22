@@ -42,7 +42,7 @@ public class Organization {
     @Column(name = "location_lng", nullable = false, precision = 9, scale = 6)
     private BigDecimal locationLng;
 
-    @Column(name = "photo_url", length = 200)
+    @Column(name = "photo_url", length = 700)
     private String photoUrl;
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
