@@ -4,6 +4,7 @@ import co.allconnected.fussiontech.organizationsservice.dtos.OrganizationCreateD
 import co.allconnected.fussiontech.organizationsservice.dtos.OrganizationDTO;
 import co.allconnected.fussiontech.organizationsservice.dtos.Response;
 import co.allconnected.fussiontech.organizationsservice.model.Organization;
+import co.allconnected.fussiontech.organizationsservice.services.FirebaseService;
 import co.allconnected.fussiontech.organizationsservice.services.OrganizationService;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,13 @@ public class OrganizationsController {
             return ResponseEntity.status(HttpStatus.CREATED).body(organizationDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null); // En caso de error, devolver una respuesta vacía
+                    .body(null);
         }
     }
 
-
+    @GetMapping
+    public ResponseEntity<?> getOrganizations() {
+        return ResponseEntity.status(HttpStatus.OK).body(organizationService.getAllOrganizations());
+    }
 
 }
