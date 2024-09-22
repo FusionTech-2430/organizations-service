@@ -20,8 +20,6 @@ public class UserOrganizationId implements Serializable {
         this.idOrganization = idOrganization;
     }
 
-    // Getters y Setters
-
     public String getIdUser() {
         return idUser;
     }
@@ -38,7 +36,6 @@ public class UserOrganizationId implements Serializable {
         this.idOrganization = idOrganization;
     }
 
-    // HashCode y Equals
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
