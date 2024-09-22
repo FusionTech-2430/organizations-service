@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,6 +42,31 @@ public class OrganizationService {
         return new OrganizationDTO(organizationRepository.save(organization));
     }
 
+    public OrganizationDTO updateOrganization(String id, OrganizationCreateDTO organizationDTO, MultipartFile photo) throws IOException {
+        Optional <Organization> organizationOptional = organizationRepository.findById(UUID.fromString(id));
+        if (organizationOptional.isPresent()) {
+            Organization organization = organizationOptional.get();
+            organization.setName(organizationDTO.name());
+            organization.setAddress(organizationDTO.address());
+            organization.setLocationLat(organizationDTO.location_lat());
+            organization.setLocationLng(organizationDTO.location_lng());
+
+            if (photo != null && !photo.isEmpty()) {
+                if (organization.getPhotoUrl() != null) {
+                    firebaseService.deleteImg(organization.getId().toString());
+                }
+                String photoName = organization.getId().toString();
+                String extension = FilenameUtils.getExtension(photo.getOriginalFilename());
+                organization.setPhotoUrl(firebaseService.uploadImg(photoName, extension, photo));
+            }
+
+            return new OrganizationDTO(organizationRepository.save(organization));
+        }
+        else{
+            throw new OperationException(404, "Organization not found");
+        }
+    }
+
 
     public OrganizationDTO getOrganization (String id) {
         return organizationRepository.findById(UUID.fromString(id))
@@ -54,11 +78,11 @@ public class OrganizationService {
         return organizationRepository.findAll().stream().map(OrganizationDTO::new).toArray(OrganizationDTO[]::new);
     }
 
-
     public void deleteOrganization(String id) {
         Optional <Organization> organizationOptional = organizationRepository.findById(UUID.fromString(id));
         if (organizationOptional.isPresent()) {
             Organization organization = organizationOptional.get();
+
 
             if (organization.getPhotoUrl() != null) {
                 firebaseService.deleteImg(organization.getId().toString());
