@@ -44,19 +44,19 @@ public class OrganizationService {
     }
 
 
-    public Optional<Organization> getOrganization(UUID id) {
-        return organizationRepository.findById(id);
+    public OrganizationDTO getOrganization (String id) {
+        return organizationRepository.findById(UUID.fromString(id))
+                .map(OrganizationDTO::new)
+                .orElseThrow(() -> new OperationException(404, "Organization not found"));
     }
 
-    public List<Organization> getAllOrganizations() {
-        return organizationRepository.findAll();
-    }
-    public Organization updateOrganization(Organization organization) {
-        return organizationRepository.save(organization);
+    public OrganizationDTO [] getOrganizations() {
+        return organizationRepository.findAll().stream().map(OrganizationDTO::new).toArray(OrganizationDTO[]::new);
     }
 
-    public void deleteOrganization(UUID id) {
-        Optional <Organization> organizationOptional = organizationRepository.findById(id);
+
+    public void deleteOrganization(String id) {
+        Optional <Organization> organizationOptional = organizationRepository.findById(UUID.fromString(id));
         if (organizationOptional.isPresent()) {
             Organization organization = organizationOptional.get();
 
