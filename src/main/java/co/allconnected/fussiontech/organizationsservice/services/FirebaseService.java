@@ -1,5 +1,6 @@
 package co.allconnected.fussiontech.organizationsservice.services;
 
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ public class FirebaseService {
 
     public void deleteImg(String imageName) {
         Bucket bucket = StorageClient.getInstance().bucket();
-        bucket.get("user_photos/"+imageName).delete();
+        Blob blob = bucket.get("organization_photos/"+imageName);
+        if (blob != null) {
+            blob.delete();
+        }
     }
 }
