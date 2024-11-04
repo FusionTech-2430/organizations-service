@@ -86,6 +86,12 @@ public class OrganizationService {
         return organizationRepository.findAll().stream().map(OrganizationDTO::new).toArray(OrganizationDTO[]::new);
     }
 
+    public OrganizationDTO [] getAllOrganizationsFromAnUser (String idUser) {
+        return userRepository.findById(idUser)
+                .map(user -> user.getUserOrganizations().stream().map(UserOrganization::getOrganization).map(OrganizationDTO::new).toArray(OrganizationDTO[]::new))
+                .orElseThrow(() -> new OperationException(404, "User not found"));
+    }
+
     public void deleteOrganization(String id) {
         Optional <Organization> organizationOptional = organizationRepository.findById(UUID.fromString(id));
         if (organizationOptional.isPresent()) {
@@ -127,7 +133,6 @@ public class OrganizationService {
         } else {
             throw new OperationException(404, "User or Organization not found");
         }
-        throw new OperationException(500, "Unexpected error");
     }
 
     public void removeUserFromOrganization(String idOrganization, String idUser) {
