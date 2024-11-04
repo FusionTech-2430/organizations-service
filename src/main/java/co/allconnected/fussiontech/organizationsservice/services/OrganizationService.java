@@ -91,6 +91,9 @@ public class OrganizationService {
         if (organizationOptional.isPresent()) {
             Organization organization = organizationOptional.get();
 
+            // Delete from the database the relationship between the organization and the users
+            userOrganizationRepository.deleteAll(organization.getUserOrganizations());
+            userOrganizationRepository.flush();
 
             if (organization.getPhotoUrl() != null) {
                 firebaseService.deleteImg(organization.getId().toString());
