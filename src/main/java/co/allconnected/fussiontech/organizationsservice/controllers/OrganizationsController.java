@@ -94,13 +94,13 @@ public class OrganizationsController {
         try {
             organizationService.assignUserToOrganization(idOrganization, idUser);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body("User assigned to organization successfully.");
+                    .body(new Response(HttpStatus.OK.value(), "User assigned to organization successfully."));
         } catch (OperationException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
+                    .body(new Response(HttpStatus.NOT_FOUND.value(), e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Unexpected error: " + e.getMessage());
+                    .body(new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error: " + e.getMessage()));
         }
     }
 
@@ -112,13 +112,31 @@ public class OrganizationsController {
         try {
             organizationService.removeUserFromOrganization(idOrganization, idUser);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body("User removed from organization successfully.");
+                    .body(new Response(HttpStatus.OK.value(), "User removed from organization successfully."));
         } catch (OperationException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
+                    .body(new Response(HttpStatus.NOT_FOUND.value(), e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Unexpected error: " + e.getMessage());
+                    .body(new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error: " + e.getMessage()));
         }
     }
+
+    @GetMapping("/{id_user}/user-organizations")
+    public ResponseEntity<?> getAllOrganizationsFromAnUser(
+            @PathVariable("id_user") String idUser
+    ) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(organizationService.getAllOrganizationsFromAnUser(idUser));
+        } catch (OperationException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new Response(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error: " + e.getMessage()));
+        }
+    }
+
+
 }
